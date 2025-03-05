@@ -1,7 +1,7 @@
 ---
-title: "redictive model for prostate cancer recurrence within five years of prostatectomy"
+title: "Predictive model for prostate cancer recurrence within five years of prostatectomy"
 format: pdf
-fontsize: 10pt
+fontsize: 90t
 editor: visual
 ---
 
@@ -11,7 +11,7 @@ Prostate cancer is the most common cancer among men in the United States, with a
 
 ## **Dataset**
 
-The professor provided us with the dataset. The data was collected from a group of 400 men who underwent radical prostatectomy at the University of Minnesota Medical Center between 1999 and 2008. The data contains demographic information, clinical variables, and measurements on 40 biomarkers. Age, Preoperative PSA, Gleason score, and Non-localized tumor indicators were extracted from the patients’ medical files, which are known to be associated with PCa recurrence. Variables were standardized, and a binary outcome for prostate cancer recurrence was created based on biochemical failure. The Gleason score was given as character. It was split and converted to a numeric format, and the sum of the numbers was done to get the gleason score. The follow-up time was converted into years, and to create an outcome variable with 5-year follow-up recording will be done. For all those with a follow-up time under 5 years and those who had recurrence will be coded as 1, and the rest with recurrence over 5 years will be coded as 0.
+The data was collected from a group of 400 men who underwent radical prostatectomy at the University of Minnesota Medical Center between 1999 and 2008. The data contains demographic information, clinical variables, and measurements on 40 biomarkers. Age, Preoperative PSA, Gleason score, and Non-localized tumor indicators were extracted from the patients’ medical files, which are known to be associated with PCa recurrence. Variables were standardized, and a binary outcome for prostate cancer recurrence was created based on biochemical failure. The Gleason score was given as character. It was split and converted to a numeric format, and the sum of the numbers was done to get the gleason score. The follow-up time was converted into years, and to create an outcome variable with 5-year follow-up recording will be done. For all those with a follow-up time under 5 years and those who had recurrence will be coded as 1, and the rest with recurrence over 5 years will be coded as 0.
 
 ## **Exploratory Data Analysis**
 
@@ -633,7 +633,7 @@ ggplot(feature_importance_df, aes(x = reorder(Feature, Importance), y = Importan
   ylab("Importance (Mean Decrease Gini)") +
   coord_flip() +  # Flipping coordinates for better readability
   theme_minimal() +
-  ggtitle("Feature Importances from Random Forest Model")
+  ggtitle("Figure 1. Feature Importances from Random Forest Model")
 
 # Plot ROC curve for CV logistic regression model
 plot(roc_cv_lr, main = "Figure 2. ROC Curves", col = "blue")
@@ -648,9 +648,9 @@ legend("bottomright",
 
 # Now, you can attempt to create the calibration plots again
 calibrationPlotBase <- calibrate(base_model_rms, method = "boot", B = 1000)  # B is the number of bootstraps
-plot(calibrationPlotBase, main = "Calibration Plot for Base Model")
+plot(calibrationPlotBase, main = "Figure 3. Calibration Plot for Base Model")
 
 calibrationPlotFull <- calibrate(full_model_rms, method = "boot", B = 1000)  # B is the number of bootstraps
-plot(calibrationPlotFull, main = "Calibration Plot for Full Model")
+plot(calibrationPlotFull, main = "Figure 4. Calibration Plot for Full Model")
 
 ```
