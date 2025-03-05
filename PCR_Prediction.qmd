@@ -1,0 +1,656 @@
+---
+title: "redictive model for prostate cancer recurrence within five years of prostatectomy"
+format: pdf
+fontsize: 10pt
+editor: visual
+---
+
+## **Introduction**
+
+Prostate cancer is the most common cancer among men in the United States, with a significant number of new cases and deaths reported annually. Although the overall survival rate is high, the variability in the disease's progression necessitates improved predictive models for recurrence post-prostatectomy. This study aims to develop and validate a predictive model for prostate cancer recurrence within five years of prostatectomy using a combination of clinical covariates and biomarkers. The research question is whether these biomarkers can be combined with clinical covariates to develop a predictive model for prostate cancer recurrence within five years of prostatectomy and whether the model, including biomarkers, improves prediction over clinical covariates alone.
+
+## **Dataset**
+
+The professor provided us with the dataset. The data was collected from a group of 400 men who underwent radical prostatectomy at the University of Minnesota Medical Center between 1999 and 2008. The data contains demographic information, clinical variables, and measurements on 40 biomarkers. Age, Preoperative PSA, Gleason score, and Non-localized tumor indicators were extracted from the patients’ medical files, which are known to be associated with PCa recurrence. Variables were standardized, and a binary outcome for prostate cancer recurrence was created based on biochemical failure. The Gleason score was given as character. It was split and converted to a numeric format, and the sum of the numbers was done to get the gleason score. The follow-up time was converted into years, and to create an outcome variable with 5-year follow-up recording will be done. For all those with a follow-up time under 5 years and those who had recurrence will be coded as 1, and the rest with recurrence over 5 years will be coded as 0.
+
+## **Exploratory Data Analysis**
+
+Exploratory Data Analysis will involve summary tables and graphical summaries. Table. 1 shows the summary statistics of the continuous variables: age, pre-operative PSA levels, and the top 5 important biomarkers, namely HMMR, SIAH2_nuc, HAS2, adfp, and IGF1.  The average age of participants is 61.5 years, with a standard deviation of 6.7, suggesting a moderate spread around the mean. The median age is 61, with half of the participants aged between 56.5 and 66.5 years, as indicated by the interquartile range 10. Pre-operative PSA levels, crucial in prostate cancer detection and monitoring, average 7.28 ng/mL, with a standard deviation of 5.48, indicating significant patient variability. The median PSA level is 5.55 ng/mL, with an interquartile range of 4.83, further highlighting the diverse disease presentations in the study cohort.
+
+Regarding biomarkers, HMMR levels have a mean and median that are very close to each other (7.65 and 7.64, respectively). SIAH2_nuc has a mean level of 1.44 and a median of 1.12, with its values dispersed as indicated by a standard deviation of 0.97 and an interquartile range of 1.15. HAS2, adfp, and IGF1 biomarkers also exhibit varied levels across the cohort, reflecting the molecular heterogeneity typical of prostate cancer.
+
+The categorical data in the table, including Gleason score, tumor localization, biochemical recurrence, and overall outcome, underscore the clinical facets of the study population. The Gleason score, an important prognostic indicator in prostate cancer, shows that the majority of patients (59%) have a score of 7, followed by 33% with a score of 6, while scores 8 and 9 are less common, representing 5% and 4% of the patients respectively. Tumor localization data reveal that 58% of patients have non-localized tumors, indicative of more advanced disease. Biochemical recurrence, a marker of disease recurrence or progression, is observed in 48% of the patients, illustrating the substantial burden of aggressive disease in this group. Finally, the outcome variable indicates that 39.25% of patients experienced recurrence in 5-year follow-up. Figure 1 shows the bar plot depicting the feature importance derived from a Random Forest model. It is arranged in descending order of importance, and the top 5 biomarkers are used for the full model.
+
+## **Methods**
+
+We will employ a logistic regression model to estimate the risk of PCa recurrence. The modeling will proceed in two steps. The first is the clinical model, which will include only clinical covariates like age, preoperative PSA, Gleason score, and tumor stage to establish a baseline predictive performance. The full model expanded upon the base model by incorporating significant biomarkers (HMMR, SIAH2_nuc, HAS2, adfp, IGF1) identified through a Random Forest analysis. These clinical biomarkers are the top 5 biomarkers among the 40 given in the data. A Random Forest model was specifically employed to rank the biomarkers based on their importance, utilizing the Mean Decrease Gini criterion and the top 5 for the full model. The outcome variable is a binary indicator of prostate cancer recurrence within five years post-prostatectomy. The predictor variables are the clinical covariates (age, preoperative PSA, Gleason score, tumor stage) for the baseline and full models and the top 5 standardized biomarkers for the full model are included.
+
+Inclusion of variables based on clinical relevance and statistical significance, with consideration for multicollinearity. Bootstrapping for internal validation to assess model stability and reliability. A 5-fold cross-validation for both logistic regression and random forest models. This method splits the data into five subsets, using four for training and one for validation in each iteration, providing a robust estimate of the model's performance. The models are also evaluated using bootstrapping (with 1000 replications), which measures accuracy and stability by resampling the data with replacement and fitting the model multiple times. Receiver Operating Characteristic (ROC) curves and Area Under the Curve (AUC) metrics are calculated for each model to clearly compare model performance in terms of distinguishing between the two outcome classes. Performance metrics such as accuracy, sensitivity, specificity, positive predictive value (precision), negative predictive value, and F1 score are calculated.  Feature importance is visualized using a bar plot, clearly representing which features are most influential in the random forest model. ROC curves are plotted for the logistic regression and random forest models to compare their performance visually.
+
+### Results
+
+Table 1. shows the values for the models. The cross-validated logistic regression model shows moderate discrimination capability (AUC: 0.58) with high sensitivity (0.86) but poor specificity (0.29), indicating it's better at identifying true positives than true negatives. However, its precision (0.65) and F1 score (0.74) suggest decent performance in correctly identifying positive cases. The bootstrapped logistic regression model has low sensitivity (0.31) but high specificity (0.84), implying it's better at identifying true negatives but struggles with true positives. The cross-validated Random Forest outperforms logistic regression significantly with a higher AUC (0.88), indicating better overall performance. It demonstrates excellent sensitivity (0.98) and specificity (0.78), resulting in high accuracy (0.90) and a strong F1 score (0.92), indicating robust performance across both positive and negative classes. Similar to the cross-validated random forest, the Bootstrapped Random Forest model performs well across all metrics, demonstrating high sensitivity (0.81), specificity (0.92), accuracy (0.87), and a strong F1 score (0.83), indicating its effectiveness in both sensitivity and specificity.
+
+Figure 2. shows the ROC curve for the best and base models. The logistic regression model's performance is less than that of the Random Forest model, as indicated by its curve being closer to the diagonal line of no discrimination. The graph for the RF model is above the blue curve, indicating that it can better distinguish between the classes (patients with and without recurrence of prostate cancer). The AUC for the Random Forest is 0.86, which is generally considered good. The points marked on the blue line represent cut-off values used to classify the results as positive or negative. For example, one of the points has a sensitivity of approximately 0.88 and a 1-specificity of about 0.30. This point represents a threshold that catches a high percentage of actual positive cases (high sensitivity), with a moderate rate of false positives. An AUC close to 1 indicates a great model, while an AUC close to 0.5 indicates a model with no discriminative ability. The closer the ROC curve is to the top left corner, the higher the test's overall accuracy. In your case, the Random Forest model's AUC of 0.86 suggests that it is a strong model.
+
+### Conclusion and Discussion
+
+From the performance of the random forest model, integrating the top 5 candidate biomarkers with clinical covariates for predicting prostate cancer recurrence could enhance the model's predictive power. Random forests are known for their ability to handle high-dimensional datasets effectively, making them suitable for integrating numerous biomarkers into predictive models. Due to the relatively low discriminative capability of the logistic regression model and the superior performance of the random forest model, it is reasonable to hypothesize that incorporating the relevant biomarkers from the 40 candidate biomarkers with clinical covariates could improve predictive accuracy compared to using clinical covariates alone. The study's limitations include potential overfitting, as the models were tested on the same dataset used for training. Another issue is that Random Forests can be less interpretable, which may limit the clinical application to understand the decision-making process.
+
+**References:**
+
+1.     Rizzardi, A.E., Rosener, N.K., **Koopmeiners, J.S.**, Vogel, R.I., Metzger, G.J., Forster, C.L., Marston, L.O., Tiffany, J.R., McCarthy, J.B., Turley, E.A., Warlick, C.A., Henriksen, J.C., Schmechel, S.C. “Evaluation of Protein Biomarkers of Prostate Cancer Aggressiveness.” BMC Cancer, **14**, Article 244, 2014.
+
+```{r,message=FALSE,echo=FALSE,warning=FALSE,include=FALSE}
+library(tidyverse)
+library(randomForest)
+library(caret)
+library(pROC)
+
+data <- read.csv("casestudy3_40genes_data.csv")
+
+data <- data %>% separate(gleason, c('gl1', 'gl2'), convert = TRUE)
+
+# Now create the gleason_score
+data$gleason_score <- data$gl1 + data$gl2
+
+data$followup_years <- ceiling(data$followup_time)
+data$outcome <- ifelse(data$followup_years <= 5 & data$biochem_failure == 1, "1", "0")
+data$outcome <- as.factor(data$outcome)
+data$outcome <- factor(data$outcome, levels = c("0", "1"))
+
+# Base model with only covariates
+model1 <- glm(outcome ~ age + preop_psa + gleason_score + stage_t_n_m, data = data, family = "binomial")
+
+set.seed(123)
+# Selecting only the biomarker variables
+biomarkers <-
+  data[, 6:45]  # Adjust the indices based on the actual biomarker columns
+outcome <-
+  factor(data$biochem_failure)  # Ensure the outcome is treated as a factor
+
+# Creating the Random Forest model using only the biomarkers
+rf_model <-randomForest(x = biomarkers, y = outcome, ntree = 500,importance = TRUE)
+
+# Extracting feature importance
+importance_values <-importance(rf_model, type = 1)  # Using MeanDecreaseGini
+
+# Transforming the importance values into a data frame for plotting
+feature_importance_df <-
+  data.frame(Feature = rownames(importance_values),
+             Importance = importance_values[, type = 1])
+
+# Ordering the features by importance
+feature_importance_df <-
+  feature_importance_df[order(-feature_importance_df$Importance),]
+
+# Random Forest model for the full model
+set.seed(123)  # For reproducibility
+full_model_rf <- randomForest(outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR +
+                                SIAH2._nuc + HAS2 + adfp + IGF1, data = data, ntree = 500)
+
+
+# Setting up cross-validation
+control_cv <- trainControl(method = "cv", number = 5)
+
+# 5-fold Cross-validation for the logistic regression model
+set.seed(123)
+model1_cv <- train(outcome ~ age + preop_psa + gleason_score + stage_t_n_m, data = data, 
+                   method = "glm", family = "binomial", trControl = control_cv)
+
+# 5-fold Cross-validation for the Random Forest model
+set.seed(123)
+full_model_rf_cv <- train(outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR + 
+                            SIAH2._nuc + HAS2 + adfp + IGF1, data = data, method = "rf", 
+                          trControl = control_cv, ntree = 500)
+
+
+# Setting up bootstrapping
+control_boot <- trainControl(method = "boot", number = 1000)
+
+# Bootstrapping for the logistic regression model
+set.seed(123)
+model1_boot <- train(outcome ~ age + preop_psa + gleason_score + stage_t_n_m, data = data, 
+                     method = "glm", family = "binomial", trControl = control_boot)
+
+# Bootstrapping for the Random Forest model
+set.seed(123)
+full_model_rf_boot <- train(outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR + 
+                              SIAH2._nuc + HAS2 + adfp + IGF1, data = data, method = "rf", 
+                            trControl = control_boot, ntree = 500)
+
+
+# Outputting the results of cross-validation
+print(model1_cv)
+print(full_model_rf_cv)
+
+
+# Outputting the results ofBootstrapping
+print(model1_boot)
+print(full_model_rf_boot)
+
+# For cross-validated logistic regression model
+predictions_cv_lr <- predict(model1_cv, newdata = data)
+conf_matrix_cv_lr <- confusionMatrix(predictions_cv_lr, data$outcome)
+
+# For cross-validated Random Forest model
+predictions_cv_rf <- predict(full_model_rf_cv, newdata = data)
+conf_matrix_cv_rf <- confusionMatrix(predictions_cv_rf, data$outcome)
+
+# For bootstrapped logistic regression model
+predictions_boot_lr <- predict(model1_boot, newdata = data)
+conf_matrix_boot_lr <- confusionMatrix(predictions_boot_lr, data$outcome)
+
+# For bootstrapped Random Forest model
+predictions_boot_rf <- predict(full_model_rf_boot, newdata = data)
+conf_matrix_boot_rf <- confusionMatrix(predictions_boot_rf, data$outcome)
+
+
+
+# For logistic regression model - cross-validated
+probabilities_cv_lr <- predict(model1_cv, newdata = data, type = "prob")[,2]
+roc_cv_lr <- roc(response = data$outcome, predictor = probabilities_cv_lr)
+auc_cv_lr <- auc(roc_cv_lr)
+
+# For Random Forest model - cross-validated
+probabilities_cv_rf <- predict(full_model_rf_cv, newdata = data, type = "prob")[,2]
+roc_cv_rf <- roc(response = data$outcome, predictor = probabilities_cv_rf)
+auc_cv_rf <- auc(roc_cv_rf)
+
+# For logistic regression model - bootstrapped
+probabilities_boot_lr <- predict(model1_boot, newdata = data, type = "prob")[,2]
+roc_boot_lr <- roc(response = data$outcome, predictor = probabilities_boot_lr)
+auc_boot_lr <- auc(roc_boot_lr)
+
+# For Random Forest model - bootstrapped
+probabilities_boot_rf <- predict(full_model_rf_boot, newdata = data, type = "prob")[,2]
+roc_boot_rf <- roc(response = data$outcome, predictor = probabilities_boot_rf)
+auc_boot_rf <- auc(roc_boot_rf)
+
+
+
+# Print the confusion matrices
+print(conf_matrix_boot_lr)
+print(conf_matrix_boot_rf)
+
+# Print AUC values
+print(paste("AUC for bootstrapped logistic regression model:", auc_boot_lr))
+print(paste("AUC for bootstrapped Random Forest model:", auc_boot_rf))
+
+
+# Using the caret package for Logistic Regression
+conf_matrix_lr <- confusionMatrix(factor(predictions_boot_lr, levels = c("0", "1")), data$outcome)
+print(conf_matrix_lr$byClass['Pos Pred Value'])  # PPV or Precision
+print(conf_matrix_lr$byClass['F1'])  # F1 Score
+
+# Using the caret package for Random Forest
+conf_matrix_rf <- confusionMatrix(factor(predictions_boot_rf, levels = c("0", "1")), data$outcome)
+print(conf_matrix_rf$byClass['Pos Pred Value'])  # PPV or Precision
+print(conf_matrix_rf$byClass['F1'])  # F1 Score
+
+
+```
+
+Exploratory data Analysis
+
+```{r,message=FALSE,warning=FALSE,echo=FALSE,include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(psych)
+library(tidyr)
+library(pROC)
+library(randomForest)
+library(caret)
+library(kableExtra)
+library(knitr)
+
+
+data <- read.csv("casestudy3_40genes_data.csv")
+
+colSums(is.na(data))
+
+data <- data %>% separate(gleason, c('gl1', 'gl2'))
+# Make sure that gl1 and gl2 are numeric
+data$gl1 <- as.numeric(as.character(data$gl1))
+data$gl2 <- as.numeric(as.character(data$gl2))
+
+# Now create the gleason_score
+data$gleason_score <- data$gl1 + data$gl2
+
+# Check the structure of the data to make sure gl1 and gl2 are numeric
+str(data)
+
+# If no errors, print the summary of the gleason_score
+summary(data$gleason_score)
+table(data$gleason_score)
+
+data$followup_years <- ceiling(data$followup_time)
+data$outcome <-
+  ifelse(data$followup_years <= 5 & data$biochem_failure == 1, 1, 0)
+
+
+# Summarize continuous variables
+summary_continuous <- data %>%
+  summarise(
+    Age_Mean = mean(age, na.rm = TRUE),
+    Age_SD = sd(age, na.rm = TRUE),
+    Age_Median = median(age, na.rm = TRUE),
+    Age_IQR = IQR(age, na.rm = TRUE),
+    PSA_Mean = mean(preop_psa, na.rm = TRUE),
+    PSA_SD = sd(preop_psa, na.rm = TRUE),
+    PSA_Median = median(preop_psa, na.rm = TRUE),
+    PSA_IQR = IQR(preop_psa, na.rm = TRUE)
+  )
+
+# Frequency tables for categorical variables
+gleason_freq <- table(data$gleason_score)
+stage_t_n_m_freq <- table(data$stage_t_n_m)
+biochem_failure_freq <- table(data$biochem_failure)
+
+# Printing the results
+print(summary_continuous)
+print(gleason_freq)
+print(stage_t_n_m_freq)
+print(biochem_failure_freq)
+
+
+# Calculate descriptive statistics for the variables
+descriptive_stats_b <- data %>%
+  summarise(
+    HMMR_Mean = mean(HMMR, na.rm = TRUE),
+    HMMR_Median = median(HMMR, na.rm = TRUE),
+    HMMR_SD = sd(HMMR, na.rm = TRUE),
+    HMMR_IQR = IQR(HMMR, na.rm = TRUE),
+    
+    SIAH2_nuc_Mean = mean(SIAH2._nuc, na.rm = TRUE),
+    SIAH2_nuc_Median = median(SIAH2._nuc, na.rm = TRUE),
+    SIAH2_nuc_SD = sd(SIAH2._nuc, na.rm = TRUE),
+    SIAH2_nuc_IQR = IQR(SIAH2._nuc, na.rm = TRUE),
+    
+    HAS2_Mean = mean(HAS2, na.rm = TRUE),
+    HAS2_Median = median(HAS2, na.rm = TRUE),
+    HAS2_SD = sd(HAS2, na.rm = TRUE),
+    HAS2_IQR = IQR(HAS2, na.rm = TRUE),
+    
+    adfp_Mean = mean(adfp, na.rm = TRUE),
+    adfp_Median = median(adfp, na.rm = TRUE),
+    adfp_SD = sd(adfp, na.rm = TRUE),
+    adfp_IQR = IQR(adfp, na.rm = TRUE),
+    
+    IGF1_Mean = mean(IGF1, na.rm = TRUE),
+    IGF1_Median = median(IGF1, na.rm = TRUE),
+    IGF1_SD = sd(IGF1, na.rm = TRUE),
+    IGF1_IQR = IQR(IGF1, na.rm = TRUE)
+  )
+
+# Print the descriptive statistics
+print(descriptive_stats_b)
+
+#######################EDA GRAPHS################################
+# Histogram for Age
+ggplot(data, aes(x = age)) +
+  geom_histogram(
+    binwidth = 1,
+    fill = "chocolate3",
+    color = "black"
+  ) +
+  labs(title = "Histogram of Age", x = "Age", y = "Frequency")
+
+# Histogram for Pre-operative PSA
+ggplot(data, aes(x = preop_psa)) +
+  geom_histogram(binwidth = 0.5,
+                 fill = "skyblue4",
+                 color = "black") +
+  labs(title = "Histogram of Pre-operative PSA", x = "Pre-operative PSA", y = "Frequency")
+
+# Boxplot for Age
+ggplot(data, aes(y = age, x = factor(1))) +
+  geom_boxplot(fill = "chocolate3") +
+  labs(title = "Boxplot of Age", x = "", y = "Age")
+
+# Boxplot for Pre-operative PSA
+ggplot(data, aes(y = preop_psa, x = factor(1))) +
+  geom_boxplot(fill = "green") +
+  labs(title = "Boxplot of Pre-operative PSA", x = "", y = "Pre-operative PSA")
+
+# Bar plot for Gleason Score
+ggplot(data, aes(x = as.factor(gleason_score))) +
+  geom_bar(fill = "coral") +
+  labs(title = "Bar Plot of Gleason Scores", x = "Gleason Score", y = "Count")
+
+# Bar plot for Stage T N M
+ggplot(data, aes(x = as.factor(stage_t_n_m))) +
+  geom_bar(fill = "purple") +
+  labs(title = "Bar Plot of Tumor Stage", x = "Tumor Stage", y = "Count")
+
+# Bar plot for Biochemical Recurrence
+ggplot(data, aes(x = as.factor(biochem_failure))) +
+  geom_bar(fill = "gold") +
+  labs(title = "Bar Plot of Biochemical Recurrence", x = "Biochemical Recurrence", y = "Count")
+
+
+# base model with only covariates
+
+model1 <-glm(outcome ~ age + preop_psa + gleason_score + stage_t_n_m, data = data,
+    family = "binomial")
+
+# Summary of the model
+summary(model1)
+
+
+
+predictions_model1 <- predict(model1, type = "response")
+predicted_classes_model1 <- ifelse(predictions_model1 > 0.5, 1, 0)
+conf_matrix_model1 <-
+  confusionMatrix(as.factor(predicted_classes_model1),
+                  as.factor(data$outcome))
+precision_model1 <- conf_matrix_model1$byClass['Pos Pred Value']
+recall_model1 <- conf_matrix_model1$byClass['Sensitivity']
+f1_score_model1 <-
+  2 * (precision_model1 * recall_model1) / (precision_model1 + recall_model1)
+
+cat("Model1 - Precision:", precision_model1, "\n")
+cat("Model1 - Recall:", recall_model1, "\n")
+cat("Model1 - F1 Score:", f1_score_model1, "\n")
+conf_matrix_model1
+## RF model for top 5 biomarkers
+# Load the necessary libraries
+
+
+set.seed(123)
+# Selecting only the biomarker variables
+biomarkers <-
+  data[, 6:45]  # Adjust the indices based on the actual biomarker columns
+outcome <-
+  factor(data$biochem_failure)  # Ensure the outcome is treated as a factor
+
+# Creating the Random Forest model using only the biomarkers
+rf_model <-randomForest(x = biomarkers, y = outcome, ntree = 500,importance = TRUE)
+
+# Extracting feature importance
+importance_values <-importance(rf_model, type = 1)  # Using MeanDecreaseGini
+
+# Transforming the importance values into a data frame for plotting
+feature_importance_df <-
+  data.frame(Feature = rownames(importance_values),
+             Importance = importance_values[, type = 1])
+
+# Ordering the features by importance
+feature_importance_df <-
+  feature_importance_df[order(-feature_importance_df$Importance),]
+
+# Now, fit the logistic regression model
+full_model <-glm(
+    outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR +
+      SIAH2._nuc + HAS2 + adfp + IGF1,
+    data = data,
+    family = "binomial")
+
+
+# Summary of the full model
+print(full_model)
+
+predictions_full_model <- predict(full_model, type = "response")
+predicted_classes_full_model <-
+  ifelse(predictions_full_model > 0.5, 1, 0)
+conf_matrix_full_model <-
+  confusionMatrix(as.factor(predicted_classes_full_model),
+                  as.factor(data$outcome))
+precision_full_model <-
+  conf_matrix_full_model$byClass['Pos Pred Value']
+recall_full_model <- conf_matrix_full_model$byClass['Sensitivity']
+f1_score_full_model <-
+  2 * (precision_full_model * recall_full_model) / (precision_full_model + recall_full_model)
+
+cat("Full Model - Precision:", precision_full_model, "\n")
+cat("Full Model - Recall:", recall_full_model, "\n")
+cat("Full Model - F1 Score:", f1_score_full_model, "\n")
+
+conf_matrix_full_model
+
+data$outcome <- factor(data$outcome, levels = c(0, 1))
+
+
+# Setting up cross-validation
+control <-
+  trainControl(method = "cv",
+               number = 5,
+               savePredictions = "final")
+
+# Training the base model with cross-validation
+base_model_cv <-
+  train(
+    outcome ~ age + preop_psa + gleason_score + stage_t_n_m,
+    data = data,
+    method = "glm",
+    family = "binomial",
+    trControl = control
+  )
+
+# Summarizing the results
+print(base_model_cv)
+
+
+# HMMR, SIAH2._nuc, HAS2, adfp, and IGF1 are the top 5 biomarkers
+
+# Training the full model with cross-validation
+full_model_cv <-
+  train(
+    outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR +
+      SIAH2._nuc + HAS2 + adfp + IGF1,
+    data = data,
+    method = "glm",
+    family = "binomial",
+    trControl = control
+  )
+
+# Summarizing the results
+print(full_model_cv)
+
+# Setting up bootstrapping
+control_boot <-
+  trainControl(method = "boot",
+               number = 1000,
+               savePredictions = "final")
+
+
+# Training the base model with bootstrapping
+base_model_boot <-
+  train(
+    outcome ~ age + preop_psa + gleason_score + stage_t_n_m,
+    data = data,
+    method = "glm",
+    family = "binomial",
+    trControl = control_boot
+  )
+
+# Summarizing the results
+print(base_model_boot)
+
+
+# Training the full model with bootstrapping
+full_model_boot <-
+  train(
+    outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR +
+      SIAH2._nuc + HAS2 + adfp + IGF1,
+    data = data,
+    method = "glm",
+    family = "binomial",
+    trControl = control_boot
+  )
+
+# Summarizing the results
+print(full_model_boot)
+
+
+# Predicting probabilities for the base model
+base_model_probs <-
+  predict(model1, newdata = data, type = "response")
+# Predicting probabilities for the full model
+full_model_probs <-
+  predict(full_model, newdata = data, type = "response")
+# ROC curve and AUC for the base model
+roc_base <- roc(data$outcome, base_model_probs)
+auc_base <- auc(roc_base)
+
+# ROC curve and AUC for the full model
+roc_full <- roc(data$outcome, full_model_probs)
+auc_full <- auc(roc_full)
+
+##C index
+# Compute the c-index (AUC)
+base_model_c_index <- roc(data$outcome, base_model_probs)$auc
+print(base_model_c_index)
+
+# Compute the c-index (AUC)
+full_model_c_index <- roc(data$outcome, full_model_probs)$auc
+print(full_model_c_index)
+
+
+
+##CAlcualte AIC And BIC for both models
+base_model_aic <- AIC(model1)
+base_model_bic <- BIC(model1)
+
+# Print the AIC and BIC for the base model
+print(base_model_aic)
+print(base_model_bic)
+
+full_model_aic <- AIC(full_model)
+full_model_bic <- BIC(full_model)
+
+# Print the AIC and BIC for the full model
+print(full_model_aic)
+print(full_model_bic)
+
+### CHecking for nested model
+
+#  model1 is your base model and full_model is your full model
+lrt_result <- anova(model1, full_model, test = "Chisq")
+
+# Display the results
+print(lrt_result)
+
+# Install and load the rms package
+# install.packages("rms")
+library(rms)
+
+# Prepare data for the rms package
+dd <- datadist(data)
+options(datadist = "dd")
+
+# Fit the logistic models using the lrm function from rms for better calibration analysis
+# Fit the logistic models using the lrm function, ensuring x and y are set to TRUE
+base_model_rms <- lrm(outcome ~ age + preop_psa + gleason_score + stage_t_n_m, data = data, x = TRUE, y = TRUE)
+
+full_model_rms <- lrm(outcome ~ age + preop_psa + gleason_score + stage_t_n_m + HMMR + SIAH2._nuc + HAS2 + adfp + IGF1, data = data, x = TRUE, y = TRUE)
+
+
+```
+
+```{r,echo=FALSE,message=FALSE}
+#-------------------------------------------
+# 1) EXTRACT METRICS FROM YOUR CONFUSION MATRICES AND ROC
+#    (Assumes you have already computed the following objects:
+#     conf_matrix_cv_lr, conf_matrix_cv_rf,
+#     conf_matrix_boot_lr, conf_matrix_boot_rf,
+#     auc_cv_lr, auc_cv_rf, auc_boot_lr, auc_boot_rf)
+#-------------------------------------------
+
+# Cross-Validated Logistic Regression
+lr_cv_auc  <- round(as.numeric(auc_cv_lr), 2)
+lr_cv_sens <- round(conf_matrix_cv_lr$byClass["Sensitivity"], 2)
+lr_cv_spec <- round(conf_matrix_cv_lr$byClass["Specificity"], 2)
+lr_cv_ppv  <- round(conf_matrix_cv_lr$byClass["Pos Pred Value"], 2)
+lr_cv_npv  <- round(conf_matrix_cv_lr$byClass["Neg Pred Value"], 2)
+lr_cv_acc  <- round(conf_matrix_cv_lr$overall["Accuracy"], 2)
+lr_cv_kappa<- round(conf_matrix_cv_lr$overall["Kappa"], 2)
+lr_cv_f1   <- round(conf_matrix_cv_lr$byClass["F1"], 2)
+
+# Cross-Validated Random Forest
+rf_cv_auc  <- round(as.numeric(auc_cv_rf), 2)
+rf_cv_sens <- round(conf_matrix_cv_rf$byClass["Sensitivity"], 2)
+rf_cv_spec <- round(conf_matrix_cv_rf$byClass["Specificity"], 2)
+rf_cv_ppv  <- round(conf_matrix_cv_rf$byClass["Pos Pred Value"], 2)
+rf_cv_npv  <- round(conf_matrix_cv_rf$byClass["Neg Pred Value"], 2)
+rf_cv_acc  <- round(conf_matrix_cv_rf$overall["Accuracy"], 2)
+rf_cv_kappa<- round(conf_matrix_cv_rf$overall["Kappa"], 2)
+rf_cv_f1   <- round(conf_matrix_cv_rf$byClass["F1"], 2)
+
+# Bootstrapped Logistic Regression
+lr_boot_auc  <- round(as.numeric(auc_boot_lr), 2)
+lr_boot_sens <- round(conf_matrix_boot_lr$byClass["Sensitivity"], 2)
+lr_boot_spec <- round(conf_matrix_boot_lr$byClass["Specificity"], 2)
+lr_boot_ppv  <- round(conf_matrix_boot_lr$byClass["Pos Pred Value"], 2)
+lr_boot_npv  <- round(conf_matrix_boot_lr$byClass["Neg Pred Value"], 2)
+lr_boot_acc  <- round(conf_matrix_boot_lr$overall["Accuracy"], 2)
+lr_boot_kappa<- round(conf_matrix_boot_lr$overall["Kappa"], 2)
+lr_boot_f1   <- round(conf_matrix_boot_lr$byClass["F1"], 2)
+
+# Bootstrapped Random Forest
+rf_boot_auc  <- round(as.numeric(auc_boot_rf), 2)
+rf_boot_sens <- round(conf_matrix_boot_rf$byClass["Sensitivity"], 2)
+rf_boot_spec <- round(conf_matrix_boot_rf$byClass["Specificity"], 2)
+rf_boot_ppv  <- round(conf_matrix_boot_rf$byClass["Pos Pred Value"], 2)
+rf_boot_npv  <- round(conf_matrix_boot_rf$byClass["Neg Pred Value"], 2)
+rf_boot_acc  <- round(conf_matrix_boot_rf$overall["Accuracy"], 2)
+rf_boot_kappa<- round(conf_matrix_boot_rf$overall["Kappa"], 2)
+rf_boot_f1   <- round(conf_matrix_boot_rf$byClass["F1"], 2)
+
+#-------------------------------------------
+# 2) CREATE A DATA FRAME OF RESULTS
+#-------------------------------------------
+results_df <- data.frame(
+  Model        = c("Cross-Validated Logistic Regression",
+                   "Cross-Validated Random Forest",
+                   "Bootstrapped Logistic Regression",
+                   "Bootstrapped Random Forest"),
+  AUC          = c(lr_cv_auc, rf_cv_auc, lr_boot_auc, rf_boot_auc),
+  Sensitivity  = c(lr_cv_sens, rf_cv_sens, lr_boot_sens, rf_boot_sens),
+  Specificity  = c(lr_cv_spec, rf_cv_spec, lr_boot_spec, rf_boot_spec),
+  PPV          = c(lr_cv_ppv, rf_cv_ppv, lr_boot_ppv, rf_boot_ppv),
+  NPV          = c(lr_cv_npv, rf_cv_npv, lr_boot_npv, rf_boot_npv),
+  Accuracy     = c(lr_cv_acc, rf_cv_acc, lr_boot_acc, rf_boot_acc),
+  Kappa        = c(lr_cv_kappa, rf_cv_kappa, lr_boot_kappa, rf_boot_kappa),
+  F1_Score     = c(lr_cv_f1, rf_cv_f1, lr_boot_f1, rf_boot_f1)
+)
+
+#-------------------------------------------
+# 3) CREATE A KABLE TABLE
+#-------------------------------------------
+kable(
+  results_df,
+  caption = "Table 1. Model Performance Comparison"
+) 
+```
+
+```{r,echo=FALSE}
+# Plotting the feature importances
+ggplot(feature_importance_df, aes(x = reorder(Feature, Importance), y = Importance)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  xlab("Features") +
+  ylab("Importance (Mean Decrease Gini)") +
+  coord_flip() +  # Flipping coordinates for better readability
+  theme_minimal() +
+  ggtitle("Feature Importances from Random Forest Model")
+
+# Plot ROC curve for CV logistic regression model
+plot(roc_cv_lr, main = "Figure 2. ROC Curves", col = "blue")
+# Add ROC curve for the bootstrapped Random Forest model
+lines(roc_boot_rf, col = "purple")
+# Update the legend to include the AUC values
+legend("bottomright", 
+       legend = c(paste("CV Logistic Regression (AUC = ", round(auc_cv_lr, 1), ")", sep = ""),
+                  paste("Bootstrapped Random Forest (AUC = ", round(auc_boot_rf, 1), ")", sep = "")),
+       col = c("blue", "purple"), 
+       lwd = 2)
+
+# Now, you can attempt to create the calibration plots again
+calibrationPlotBase <- calibrate(base_model_rms, method = "boot", B = 1000)  # B is the number of bootstraps
+plot(calibrationPlotBase, main = "Calibration Plot for Base Model")
+
+calibrationPlotFull <- calibrate(full_model_rms, method = "boot", B = 1000)  # B is the number of bootstraps
+plot(calibrationPlotFull, main = "Calibration Plot for Full Model")
+
+```
